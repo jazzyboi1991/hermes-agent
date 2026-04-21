@@ -33,6 +33,7 @@ import LogsPage from "@/pages/LogsPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
 import CronPage from "@/pages/CronPage";
 import SkillsPage from "@/pages/SkillsPage";
+import ChatPage from "@/pages/ChatPage";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { useI18n } from "@/i18n";
@@ -45,6 +46,7 @@ import { useTheme } from "@/themes";
  *  `path` in `BUILTIN_NAV` so `/path` lookups stay consistent. */
 const BUILTIN_ROUTES: Record<string, React.ComponentType> = {
   "/": StatusPage,
+  "/chat": ChatPage,
   "/sessions": SessionsPage,
   "/analytics": AnalyticsPage,
   "/logs": LogsPage,
@@ -56,6 +58,7 @@ const BUILTIN_ROUTES: Record<string, React.ComponentType> = {
 
 const BUILTIN_NAV: NavItem[] = [
   { path: "/", labelKey: "status", label: "Status", icon: Activity },
+  { path: "/chat", labelKey: "chat", label: "Chat", icon: Terminal },
   {
     path: "/sessions",
     labelKey: "sessions",

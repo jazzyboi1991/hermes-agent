@@ -54,6 +54,7 @@ export const en: Translations = {
     },
     nav: {
       status: "Status",
+      chat: "Chat",
       sessions: "Sessions",
       analytics: "Analytics",
       logs: "Logs",
@@ -106,6 +107,7 @@ export const en: Translations = {
     noMessages: "No messages",
     untitledSession: "Untitled session",
     deleteSession: "Delete session",
+    resumeInChat: "Resume in Chat",
     previousPage: "Previous page",
     nextPage: "Next page",
     roles: {

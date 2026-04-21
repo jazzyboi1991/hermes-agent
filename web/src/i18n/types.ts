@@ -56,6 +56,7 @@ export interface Translations {
     };
     nav: {
       status: string;
+      chat: string;
       sessions: string;
       analytics: string;
       logs: string;
@@ -110,6 +111,7 @@ export interface Translations {
     noMessages: string;
     untitledSession: string;
     deleteSession: string;
+    resumeInChat: string;
     previousPage: string;
     nextPage: string;
     roles: {
