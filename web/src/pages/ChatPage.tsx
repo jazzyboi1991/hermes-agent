@@ -53,7 +53,13 @@ export default function ChatPage() {
   const fitRef = useRef<FitAddon | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [searchParams] = useSearchParams();
-  const [banner, setBanner] = useState<string | null>(null);
+  // Lazy-init: the missing-token check happens at construction so the effect
+  // body doesn't have to setState (React 19's set-state-in-effect rule).
+  const [banner, setBanner] = useState<string | null>(() =>
+    typeof window !== "undefined" && !window.__HERMES_SESSION_TOKEN__
+      ? "Session token unavailable. Open this page through `hermes dashboard`, not directly."
+      : null,
+  );
   const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
   const copyResetRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -83,10 +89,8 @@ export default function ChatPage() {
     if (!host) return;
 
     const token = window.__HERMES_SESSION_TOKEN__;
+    // Banner already initialised above; just bail before wiring xterm/WS.
     if (!token) {
-      setBanner(
-        "Session token unavailable. Open this page through `hermes dashboard`, not directly.",
-      );
       return;
     }
 
@@ -320,6 +324,7 @@ export default function ChatPage() {
     // release, and wheel events always pass through; motion events only
     // pass through if the cell changed.  Parsing is cheap — SGR reports
     // are short literal strings.
+    // eslint-disable-next-line no-control-regex -- intentional ESC byte in xterm SGR mouse report parser
     const SGR_MOUSE_RE = /^\x1b\[<(\d+);(\d+);(\d+)([Mm])$/;
     let lastMotionCell = { col: -1, row: -1 };
     let lastMotionCb = -1;
@@ -382,7 +387,6 @@ export default function ChatPage() {
         copyResetRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Layout:
