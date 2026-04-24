@@ -2540,6 +2540,7 @@ class DiscordAdapter(BasePlatformAdapter):
             )
             tree.add_command(cmd)
 
+
             logger.info(
                 "[%s] Registered /skill command with %d skill(s) via autocomplete",
                 self.name, len(entries),

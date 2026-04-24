@@ -37,7 +37,7 @@ from pathlib import Path
 from typing import Any, Awaitable, Dict, Optional
 from urllib.parse import urlparse
 import httpx
-from agent.auxiliary_client import async_call_llm, extract_content_or_reasoning
+from agent.auxiliary_client import async_call_llm, call_llm, extract_content_or_reasoning
 from tools.debug_helpers import DebugSession
 from tools.website_policy import check_website_access
 
@@ -215,7 +215,8 @@ async def _download_image(image_url: str, destination: Path, max_retries: int = 
                 await asyncio.sleep(wait_time)
             else:
                 logger.error(
-                    "Image download failed after %s attempts: %s",
+                    "Image download failed for URL %s after %s attempts: %s",
+                    image_url,
                     max_retries,
                     str(e)[:100],
                     exc_info=True,
@@ -577,7 +578,18 @@ async def vision_analyze_tool(
             call_kwargs["model"] = model
         # Try full-size image first; on size-related rejection, downscale and retry.
         try:
-            response = await async_call_llm(**call_kwargs)
+            import asyncio
+            # Use synchronous call_llm in a thread to avoid async client timeout with large images
+            response = await asyncio.to_thread(
+                call_llm,
+                task=call_kwargs.get("task"),
+                messages=call_kwargs.get("messages"),
+                temperature=call_kwargs.get("temperature"),
+                max_tokens=call_kwargs.get("max_tokens"),
+                timeout=call_kwargs.get("timeout"),
+                extra_body=call_kwargs.get("extra_body"),
+                model=call_kwargs.get("model"),
+            )
         except Exception as _api_err:
             if (_is_image_size_error(_api_err)
                     and len(image_data_url) > _RESIZE_TARGET_BYTES):
@@ -623,7 +635,7 @@ async def vision_analyze_tool(
         return json.dumps(result, indent=2, ensure_ascii=False)
         
     except Exception as e:
-        error_msg = f"Error analyzing image: {str(e)}"
+        error_msg = f"Error analyzing image from {image_url}: {str(e)}"
         logger.error("%s", error_msg, exc_info=True)
         
         # Detect vision capability errors — give the model a clear message
