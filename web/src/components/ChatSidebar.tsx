@@ -166,8 +166,7 @@ export function ChatSidebar() {
     // Adopt whichever session the gateway hands us. session.create is a
     // no-op on the existing slot if the gateway already has an active
     // session for this profile; either way we get a sid back to use.
-    gw
-      .connect()
+    gw.connect()
       .then(() => gw.request<{ session_id: string }>("session.create", {}))
       .then((created) => {
         if (created?.session_id) {

@@ -16,15 +16,15 @@
  *     POSIX PTY → `node ui-tui/dist/entry.js` → tui_gateway + AIAgent     .
  */
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { WebglAddon } from "@xterm/addon-webgl";
 import { Unicode11Addon } from "@xterm/addon-unicode11";
 import { WebLinksAddon } from "@xterm/addon-web-links";
-import { Copy } from "lucide-react";
+import { WebglAddon } from "@xterm/addon-webgl";
+import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
+import { Copy } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { ChatSidebar } from "@/components/ChatSidebar";
 
@@ -294,9 +294,7 @@ export default function ChatPage() {
     ws.onclose = (ev) => {
       wsRef.current = null;
       if (ev.code === 4401) {
-        setBanner(
-          "Auth failed. Reload the page to refresh the session token.",
-        );
+        setBanner("Auth failed. Reload the page to refresh the session token.");
         return;
       }
       if (ev.code === 4403) {
